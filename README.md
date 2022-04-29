@@ -1,7 +1,7 @@
 安装方式
 
 ```shell
-pip install p4client
+pip install api4p4
 ```
 
 使用方法
