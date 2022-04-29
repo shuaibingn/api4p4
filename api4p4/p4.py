@@ -54,11 +54,13 @@ class P4:
     @property
     @check_connection
     def workspace(self):
-        return self.p4.fetch_client(self._workspace_name)
+        return self.fetch_workspace(self._workspace_name)
 
     @property
     def workspace_name(self):
-        assert self._workspace_name
+        if not self._workspace_name:
+            raise P4Exception("workspace has not been set up")
+
         return self._workspace_name
 
     @property
@@ -71,6 +73,16 @@ class P4:
             self.password = password
 
         self.p4.run_login(password=self.password)
+
+    def fetch_workspace(self, workspace_name):
+        workspace = self.workspace_exists(workspace_name)
+        if not workspace:
+            raise P4Exception(f"workspace `{workspace_name}` not exists")
+
+        return self.p4.fetch_client(workspace_name)
+
+    def _create_workspace(self, workspace_name):
+        return self.p4.fetch_client(workspace_name)
 
     def set_workspace(self, *args, **kwargs):
         """
@@ -143,7 +155,7 @@ class P4:
 
             self.P4_OPTIONS = re.sub(re.compile(rf"(un|no){options}", re.S), options, self.P4_OPTIONS)
 
-        workspace = self.p4.fetch_client(workspace_name)
+        workspace = self._create_workspace(workspace_name)
         if type_detect_none(owner):
             workspace["Owner"] = owner
         if type_detect_none(host):
@@ -168,7 +180,7 @@ class P4:
 
     @check_connection
     def switch_workspace(self, workspace_name):
-        self.p4.fetch_client(workspace_name)
+        self.fetch_workspace(workspace_name)
         self.p4.client = workspace_name
         self._workspace_name = workspace_name
 
@@ -215,7 +227,7 @@ class P4:
             depots.add(res.group().strip())
 
         for x in depots:
-            self.update("{}...".format(x), version, force_sync)
+            self.update(f"{x}...", version, force_sync)
 
     @check_connection
     def submit(self, msg):
