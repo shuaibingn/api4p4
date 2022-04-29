@@ -1,12 +1,12 @@
 import re
 
-from P4 import P4, P4Exception
+from P4 import P4Exception, P4 as _P4
 
 from api4p4.decorator import check_connection
 from api4p4.type_utils import type_detect_none
 
 
-class P4Client:
+class P4:
     """P4  operation wrapper"""
     # The mode of add api4p4 mapping
     #                       w: overwrite
@@ -41,7 +41,7 @@ class P4Client:
         self.password = kwargs.get("password")
         self.user = kwargs.get("user")
 
-        self.p4 = P4(**kwargs)
+        self.p4 = _P4(**kwargs)
         if multiple:
             self.p4.disable_tmp_cleanup()
 
@@ -117,8 +117,7 @@ class P4Client:
         return p4_view
 
     @check_connection
-    def modify_workspace(self, workspace_name, owner=None, host=None, root=None, options=None,
-                         submit_options="submitunchanged", view=None, mode=DEFAULT_VIEW_MODE):
+    def modify_workspace(self, workspace_name, owner=None, host=None, root=None, options=None, submit_options="submitunchanged", view=None, mode=DEFAULT_VIEW_MODE):
         """
         :param workspace_name:
         :param owner:
