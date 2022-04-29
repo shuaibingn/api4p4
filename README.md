@@ -7,10 +7,10 @@ pip install p4client
 使用方法
 
 ```python
-from p4.p4_client import P4Client
+from api4p4 import P4Client
 
 p4_auth = {
-    "port": "p4.com:1666",
+    "port": "api4p4.com:1666",
     "user": "admin",
     "password": "admin",
 }

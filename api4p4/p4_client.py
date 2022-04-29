@@ -2,13 +2,13 @@ import re
 
 from P4 import P4, P4Exception
 
-from p4.decorator import check_connection
-from p4.type_utils import type_detect_none
+from api4p4.decorator import check_connection
+from api4p4.type_utils import type_detect_none
 
 
 class P4Client:
     """P4  operation wrapper"""
-    # The mode of add p4 mapping
+    # The mode of add api4p4 mapping
     #                       w: overwrite
     #                       a: append write
     # DEFAULT_VIEW_MODE:    w: overwrite
@@ -25,10 +25,10 @@ class P4Client:
     def __init__(self, logger=None, multiple=False, exception_level=1, **kwargs):
         """
         :param: multiple: invoke this prior to connecting if you need to use multiple P4 connections in parallel in a multi-threaded Python application.
-        :param: port: p4 server, example p4.com:2002
+        :param: port: api4p4 server, example api4p4.com:2002
         :param: user: user name
         :param: password: user password
-        :param: charset: p4 character set, must be one of:
+        :param: charset: api4p4 character set, must be one of:
                 none, auto, utf8, utf8-bom, iso8859-1, shiftjis, eucjp, iso8859-15,
                 iso8859-5, macosroman, winansi, koi8-r, cp949, cp1251,
                 utf16, utf16-nobom, utf16le, utf16le-bom, utf16be,
@@ -99,7 +99,7 @@ class P4Client:
     def _completion_view(workspace_name, view):
         """
         convert to complete mapping
-        :return: the fully p4 view list
+        :return: the fully api4p4 view list
         """
         p4_view = []
         for x in view:
@@ -112,7 +112,7 @@ class P4Client:
             elif view_split_list_len == 2:
                 p4_view.append(x)
             else:
-                raise P4Exception(f"invalid length of p4 view")
+                raise P4Exception(f"invalid length of api4p4 view")
 
         return p4_view
 
@@ -127,10 +127,10 @@ class P4Client:
         :param options:
         :param submit_options:
         :param view:
-        :param mode: the mode of add p4 mapping
+        :param mode: the mode of add api4p4 mapping
         """
         if mode not in self.VIEW_MODE:
-            raise P4Exception(f"invalid mode of add p4 mapping: `{mode}`")
+            raise P4Exception(f"invalid mode of add api4p4 mapping: `{mode}`")
 
         options = options or []
         if not isinstance(options, list):
@@ -176,7 +176,7 @@ class P4Client:
     @check_connection
     def update(self, file, version=None, force_sync=False):
         """
-        update the specified version data from p4 server
+        update the specified version data from api4p4 server
         :param file: file to update
         :param version: specified version, default is latest(#head)
         :param force_sync:
@@ -269,6 +269,6 @@ class P4Client:
             self.p4.connect()
 
     def disconnect(self):
-        """disconnect from p4 server if is connected"""
+        """disconnect from api4p4 server if is connected"""
         if self.p4.connected():
             self.p4.disconnect()
