@@ -45,13 +45,14 @@ class P4:
         if multiple:
             self.p4.disable_tmp_cleanup()
 
-        self.connect()
         if logger:
             self.p4.logger = logger
 
         self.p4.exception_level = exception_level
+        self.connect()
 
     @property
+    @check_connection
     def workspace(self):
         return self.p4.fetch_client(self._workspace_name)
 
@@ -92,6 +93,7 @@ class P4:
         workspace_name = kwargs.get("workspace_name")
         self.switch_workspace(workspace_name)
 
+    @check_connection
     def workspace_exists(self, workspace_name):
         return self.p4.run_clients("-e", workspace_name)
 
@@ -164,6 +166,7 @@ class P4:
 
         self.p4.save_client(workspace)
 
+    @check_connection
     def switch_workspace(self, workspace_name):
         self.p4.fetch_client(workspace_name)
         self.p4.client = workspace_name
