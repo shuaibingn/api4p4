@@ -74,6 +74,7 @@ class P4:
 
         self.p4.run_login(password=self.password)
 
+    @check_connection
     def fetch_workspace(self, workspace_name):
         workspace = self.workspace_exists(workspace_name)
         if not workspace:
@@ -81,6 +82,7 @@ class P4:
 
         return self.p4.fetch_client(workspace_name)
 
+    @check_connection
     def _create_workspace(self, workspace_name):
         return self.p4.fetch_client(workspace_name)
 
