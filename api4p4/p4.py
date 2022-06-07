@@ -35,6 +35,9 @@ class P4:
                 utf16be-bom, utf32, utf32-nobom, utf32le, utf32le-bom, utf32be,
                 cp936, cp950, cp850, cp858, cp1253, iso8859-7, utf32be-bom,
                 cp852, cp1250, iso8859-2
+        :param: encoding: When decoding strings from a non-Unicode server, strings are assumed to be encoded in UTF8.
+                To use another encoding, set p4.encoding to a legal Python encoding, or raw to receive Python bytes instead of a Unicode string.
+                Available only when compiled with Python 3.
         ...
         """
         self._workspace_name = ""
@@ -232,52 +235,38 @@ class P4:
             self.update(f"{x}...", version, force_sync)
 
     @check_connection
-    def submit(self, msg):
-        self.p4.run_submit("-d", msg)
+    def submit(self, *args, **kwargs):
+        return self.p4.run_submit(*args, **kwargs)
 
     @check_connection
-    def add(self, file: str):
-        self.p4.run_add(file)
+    def add(self, *args, **kwargs):
+        return self.p4.run_add(*args, **kwargs)
 
     @check_connection
-    def edit(self, file: str):
-        self.p4.run_edit(file)
+    def edit(self, *args, **kwargs):
+        return self.p4.run_edit(*args, **kwargs)
 
     @check_connection
-    def reconcile(self, params=None, file=None):
+    def reconcile(self, *args, **kwargs):
         """
-        result = reconcile(["-d", "a"], "//depot/test.txt)
+        result = reconcile("-a", "-e", "//depot/test.txt)
         """
-        if not file:
-            file = f"//{self.workspace_name}/..."
-
-        params = params if params is not None else []
-        params.append(file)
-
-        return self.p4.run_reconcile(*params)
+        return self.p4.run_reconcile(*args, **kwargs)
 
     @check_connection
     def delete_workspace(self, workspace_name):
         """delete workspace"""
-        self.p4.run("client", "-d", workspace_name)
+        return self.p4.run_client("-d", workspace_name)
 
     @check_connection
-    def get_changes(self, params=None):
-        args = ["changes"]
-        if params:
-            args += params
+    def get_changes(self, *args, **kwargs):
+        return self.p4.run_changes(*args, **kwargs)
 
-        change = self.p4.run(*args)
-        return change
+    def get_latest_change(self, file, local=False):
+        if local:
+            file += "#have"
 
-    def get_latest_change(self, file=None, local=False):
-        params = ["-m1"]
-        if file:
-            if local:
-                file += "#have"
-            params.append(file)
-
-        change = self.get_changes(params)
+        change = self.get_changes("-m1", file)
         return change
 
     def connect(self):
